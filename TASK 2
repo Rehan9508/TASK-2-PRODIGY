@@ -1,0 +1,413 @@
+This Titanic analysis project demonstrates a comprehensive approach to analyzing datasets related to the Titanic disaster. It covers three distinct datasets: gender submission, test, and train datasets. Each dataset plays a specific role in understanding the passengers' characteristics and survival patterns. Here's an explanation of the project's structure and objectives:
+
+1. Gender Submission Dataset
+This dataset contains information on passengers' survival predictions based on gender. It is used as a benchmark or baseline for the prediction model.
+
+Key Steps:
+Data Loading and Exploration:
+Loaded the dataset and explored its structure.
+Checked for missing and duplicate values.
+Exploratory Data Analysis (EDA):
+Visualized the distribution of survival status using a count plot and pie chart.
+Examined the unique values and percentages of passengers who survived versus those who didn’t.
+Statistical Insights:
+Basic descriptive statistics and a correlation heatmap were generated to identify relationships between numeric features.
+Although the dataset is minimal, it provides a starting point for understanding survival distribution.
+2. Test Dataset
+This dataset contains information on Titanic passengers, excluding the survival column. It is often used for testing predictive models.
+
+Key Steps:
+Data Cleaning:
+Handled missing values:
+Filled missing ages and fares with the median.
+Dropped the Cabin column due to excessive missing data.
+Ensured no missing values remained.
+Exploratory Data Analysis:
+Visualized distributions of various features, such as Pclass, Sex, Age, Embarked, and Fare.
+Used pair plots to identify relationships among numerical variables.
+Feature Analysis:
+Analyzed categorical features like Pclass and Sex to understand patterns and relationships.
+Provided insights into the dataset structure and feature distributions.
+Correlation Analysis:
+Generated a heatmap to identify relationships between numeric columns.
+3. Train Dataset
+The train dataset includes a Survived column, enabling detailed survival analysis and model training.
+
+Key Steps:
+Data Cleaning:
+Converted Survived and Sex columns to categorical types for better analysis.
+Handled missing values in Age and Embarked and removed the Cabin column.
+Exploratory Data Analysis:
+Visualized:
+Age distribution and survival patterns by gender (Sex).
+Survival rates across passenger classes (Pclass).
+Created a heatmap to understand correlations among features.
+Insights:
+Determined the total number of survivors and non-survivors.
+Calculated survival rates by gender and passenger class.
+Computed the average age of survivors versus non-survivors to identify trends.
+4. Insights and Observations
+Gender as a Key Factor: Females generally had a higher survival rate, as visualized in the Survived vs. Sex analysis.
+Class-Based Survival Trends: Passengers in higher classes (e.g., 1st class) were more likely to survive, reflecting possible socioeconomic influences.
+Age Influence: Younger passengers had higher survival rates on average.
+Data Cleaning Challenges: Missing values, especially in Age and Cabin, required careful handling to maintain dataset integrity.
+Project Goals:
+Understand Data Trends: Through EDA and statistical analysis, the project uncovers patterns and insights related to survival.
+Prepare Data for Modeling: By cleaning and exploring datasets, it sets the foundation for predictive modeling (though modeling isn’t directly included here).
+Visualize Key Features: Various visualizations help make the data trends more comprehensible.
+This project lays the groundwork for predictive modeling by preparing clean, structured data and providing a detailed understanding of the Titanic datasets. It reflects critical data analysis skills, including handling missing data, generating insights, and using visualizations to communicate findings effectively.
+
+
+# CODE :
+
+
+Import necessary libraries
+import pandas as pd
+
+# Path to the directory where the Titanic files are extracted
+extraction_path = '/content/titanic_data'
+
+# Path to the gender submission CSV file
+submission_path = f'{extraction_path}/gender_submission.csv'
+
+# Load the gender submission dataset
+submission_data = pd.read_csv(submission_path)
+
+# Display basic information about the gender submission dataset
+print("Gender Submission Data:")
+print(submission_data.info(), "\n")
+print(submission_data.head())
+
+# Import necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set visualization style
+sns.set(style="whitegrid")
+
+# Path to the extracted file
+extraction_path = '/content/titanic_data/gender_submission.csv'
+
+# Load the gender submission dataset
+submission_data = pd.read_csv(extraction_path)
+
+# ---------------------------
+# 1. Data Cleaning
+# ---------------------------
+
+# Check for missing values
+missing_values = submission_data.isnull().sum()
+print("Missing Values in Each Column:\n", missing_values, "\n")
+
+# Check for duplicate records
+duplicate_rows = submission_data.duplicated().sum()
+print("Number of Duplicate Rows:", duplicate_rows, "\n")
+
+# Drop duplicates if any exist (none are expected in this dataset)
+submission_data.drop_duplicates(inplace=True)
+
+# ---------------------------
+# 2. Exploratory Data Analysis (EDA)
+# ---------------------------
+
+# 1. Distribution of 'Survived' column
+plt.figure(figsize=(6, 4))
+sns.countplot(x='Survived', data=submission_data, palette='pastel')
+plt.title('Distribution of Survival Status')
+plt.xticks([0, 1], ['Not Survived', 'Survived'])
+plt.xlabel('Survival Status')
+plt.ylabel('Count')
+plt.show()
+
+# 2. Check the percentage of people who survived vs those who didn't
+survival_counts = submission_data['Survived'].value_counts(normalize=True) * 100
+print("Percentage of Survival Status:\n", survival_counts, "\n")
+
+# 3. Display the unique values in the 'Survived' column
+unique_values = submission_data['Survived'].unique()
+print("Unique Values in 'Survived' Column:", unique_values, "\n")
+
+# 4. Visualize the survival percentage
+plt.figure(figsize=(6, 6))
+plt.pie(
+    survival_counts, 
+    labels=['Not Survived', 'Survived'], 
+    colors=['#ff9999','#66b3ff'], 
+    startangle=90, 
+    autopct='%1.1f%%'
+)
+plt.title('Survival Percentage')
+plt.show()
+
+# 5. Scatterplot of 'PassengerId' vs 'Survived'
+plt.figure(figsize=(8, 5))
+sns.scatterplot(x='PassengerId', y='Survived', data=submission_data, hue='Survived', palette='pastel')
+plt.title('Passenger Survival Status by Passenger ID')
+plt.xlabel('Passenger ID')
+plt.ylabel('Survival Status')
+plt.show()
+
+# ---------------------------
+# 3. Descriptive Statistics
+# ---------------------------
+print("\nDescriptive Statistics for Numeric Columns:")
+print(submission_data.describe())
+
+# ---------------------------
+# 4. Correlation Analysis
+# ---------------------------
+# Since there are only two numeric columns, correlation may not be meaningful, but we'll calculate it anyway
+correlation_matrix = submission_data.corr()
+print("\nCorrelation Matrix:\n", correlation_matrix, "\n")
+
+# Plot the heatmap for the correlation
+plt.figure(figsize=(6, 4))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', cbar=True, fmt=".2f")
+plt.title('Correlation Heatmap')
+plt.show()
+
+# Import necessary libraries
+import pandas as pd
+
+# Path to the directory where the Titanic files are extracted
+extraction_path = '/content/titanic_data'
+
+# Path to the test CSV file
+test_path = f'{extraction_path}/test.csv'
+
+# Load the test dataset
+test_data = pd.read_csv(test_path)
+
+# Display basic information about the test dataset
+print("Test Data:")
+print(test_data.info(), "\n")
+print(test_data.head())
+
+# ----------------------------
+# 1. Import necessary libraries
+# ----------------------------
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set visualization style
+sns.set(style="whitegrid")
+
+# ----------------------------
+# 2. Load the Titanic test dataset
+# ----------------------------
+# Path to the extracted Titanic data folder
+extraction_path = '/content/titanic_data/test.csv'
+
+# Load the test dataset
+test_data = pd.read_csv(extraction_path)
+
+# ----------------------------
+# 3. Data Cleaning
+# ----------------------------
+
+# 1. Check for missing values
+missing_values = test_data.isnull().sum()
+print("\nMissing Values in Each Column:\n", missing_values, "\n")
+
+# 2. Handle missing values
+# Fill missing 'Age' with the median age
+test_data['Age'].fillna(test_data['Age'].median(), inplace=True)
+
+# Drop 'Cabin' due to too many missing values
+test_data.drop(columns=['Cabin'], inplace=True)
+
+# Fill missing 'Fare' with the median fare
+test_data['Fare'].fillna(test_data['Fare'].median(), inplace=True)
+
+# Verify that there are no more missing values
+print("\nMissing Values After Cleaning:\n", test_data.isnull().sum(), "\n")
+
+# ----------------------------
+# 4. Exploratory Data Analysis (EDA)
+# ----------------------------
+
+# 1. View basic information about the dataset
+print("\nDataset Info:")
+print(test_data.info())
+
+# 2. Descriptive statistics for numeric columns
+print("\nDescriptive Statistics for Numeric Columns:")
+print(test_data.describe())
+
+# 3. Count plot for 'Pclass' to visualize how many passengers are in each class
+plt.figure(figsize=(6, 4))
+sns.countplot(x='Pclass', data=test_data, palette='pastel')
+plt.title('Passenger Count by Class')
+plt.xlabel('Passenger Class')
+plt.ylabel('Count')
+plt.show()
+
+# 4. Count plot for 'Sex' to see the distribution of male and female passengers
+plt.figure(figsize=(6, 4))
+sns.countplot(x='Sex', data=test_data, palette='pastel')
+plt.title('Passenger Count by Gender')
+plt.xlabel('Gender')
+plt.ylabel('Count')
+plt.show()
+
+# 5. Distribution of 'Age' to understand the age distribution of passengers
+plt.figure(figsize=(8, 5))
+sns.histplot(test_data['Age'], bins=30, kde=True, color='skyblue')
+plt.title('Age Distribution of Passengers')
+plt.xlabel('Age')
+plt.ylabel('Frequency')
+plt.show()
+
+# 6. Count plot for 'Embarked' to visualize how many passengers embarked from each location
+plt.figure(figsize=(6, 4))
+sns.countplot(x='Embarked', data=test_data, palette='pastel')
+plt.title('Passenger Count by Embarkation Port')
+plt.xlabel('Embarkation Port')
+plt.ylabel('Count')
+plt.show()
+
+# 7. Distribution of 'Fare' to understand the range of ticket prices
+plt.figure(figsize=(8, 5))
+sns.histplot(test_data['Fare'], bins=30, kde=True, color='orange')
+plt.title('Distribution of Fare Prices')
+plt.xlabel('Fare')
+plt.ylabel('Frequency')
+plt.show()
+
+# 8. Pairplot to visualize relationships between multiple numeric features
+sns.pairplot(test_data[['Age', 'Fare', 'Pclass', 'SibSp', 'Parch']])
+plt.suptitle('Pairplot of Age, Fare, Pclass, SibSp, and Parch', y=1.02)
+plt.show()
+
+# ----------------------------
+# 5. Categorical Feature Analysis
+# ----------------------------
+
+# 1. Survival by 'Sex' and 'Pclass' (if Survived column was present)
+# (since 'Survived' is not in the test.csv, we can't analyze it directly)
+# We can analyze relationships between 'Pclass', 'Sex', and other features
+
+# 2. Count plot for 'Pclass' vs 'Sex' to see how many males/females are in each class
+plt.figure(figsize=(6, 4))
+sns.countplot(x='Pclass', hue='Sex', data=test_data, palette='pastel')
+plt.title('Passenger Count by Class and Gender')
+plt.xlabel('Passenger Class')
+plt.ylabel('Count')
+plt.show()
+
+# ----------------------------
+# 6. Correlation Analysis
+# ----------------------------
+
+# 1. Correlation between numerical columns
+correlation_matrix = test_data[['Age', 'Fare', 'Pclass', 'SibSp', 'Parch']].corr()
+print("\nCorrelation Matrix:\n", correlation_matrix, "\n")
+
+# 2. Visualize the correlation heatmap
+plt.figure(figsize=(8, 6))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', cbar=True, fmt=".2f")
+plt.title('Correlation Heatmap')
+plt.show()
+
+# ----------------------------
+# 1. Import necessary libraries
+# ----------------------------
+import pandas as pd
+
+# Path to the extracted Titanic data folder
+extraction_path = '/content/titanic_data/train.csv'
+
+# Load the train dataset directly from the extraction path
+train_data = pd.read_csv(extraction_path)
+
+# ----------------------------
+# 2. Display basic information about the train dataset
+# ----------------------------
+print("Train Data:")
+print(train_data.info(), "\n")  # Display dataset information (columns, non-null counts, etc.)
+print(train_data.head())  # Display the first 5 rows of the dataset
+
+# Import necessary libraries
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Set the style for seaborn plots
+sns.set(style="whitegrid")
+
+# ----------------------------
+# 1. Load Data (Update with your correct file path)
+# ----------------------------
+train_data = pd.read_csv('train[1].csv')  # Update this with the correct path
+
+# ----------------------------
+# 2. Data Cleaning
+# ----------------------------
+
+# Convert 'Survived' and 'Sex' to categorical data types to avoid issues with seaborn's hue
+train_data['Survived'] = train_data['Survived'].astype('category')
+train_data['Sex'] = train_data['Sex'].astype('category')
+
+# Handle missing values (For demonstration, filling with median/most frequent values)
+train_data['Age'].fillna(train_data['Age'].median(), inplace=True)  # Fill missing Age with median
+train_data['Embarked'].fillna(train_data['Embarked'].mode()[0], inplace=True)  # Fill missing Embarked with most frequent value
+
+# Drop the 'Cabin' column since it's mostly missing
+train_data.drop(columns=['Cabin'], inplace=True)
+
+# ----------------------------
+# 3. Exploratory Data Analysis (EDA)
+# ----------------------------
+
+# Visualization 1: Distribution of Age
+plt.figure(figsize=(6, 4))
+sns.histplot(train_data['Age'], kde=True, color='skyblue', bins=30)
+plt.title('Age Distribution')
+plt.xlabel('Age')
+plt.ylabel('Frequency')
+plt.show()  # Ensure the plot is rendered
+
+# Visualization 2: Survival by Gender using catplot
+sns.catplot(data=train_data, x='Sex', hue='Survived', kind='count', palette='pastel')
+plt.title('Survival by Gender')  # Add title to the catplot
+plt.xlabel('Gender')  # Label the x-axis
+plt.ylabel('Count')  # Label the y-axis
+plt.show()  # Ensure the plot is rendered
+
+# Visualization 3: Survival by Pclass using catplot
+sns.catplot(data=train_data, x='Pclass', hue='Survived', kind='count', palette='Set1')
+plt.title('Survival by Pclass')  # Add title to the catplot
+plt.xlabel('Pclass')  # Label the x-axis
+plt.ylabel('Count')  # Label the y-axis
+plt.show()  # Ensure the plot is rendered
+
+# Visualization 4: Correlation Heatmap
+plt.figure(figsize=(10, 6))
+corr = train_data.corr()
+sns.heatmap(corr, annot=True, cmap='coolwarm', linewidths=0.5)
+plt.title('Correlation Heatmap')  # Add title to the heatmap
+plt.show()  # Ensure the plot is rendered
+
+# ----------------------------
+# 4. Insights
+# ----------------------------
+
+# Count the number of survivors and non-survivors
+survival_counts = train_data['Survived'].value_counts()
+print(f"Survival Counts:\n{survival_counts}\n")
+
+# Count the number of survivors by gender
+gender_survival_counts = train_data.groupby('Sex')['Survived'].value_counts()
+print(f"Survival Counts by Gender:\n{gender_survival_counts}\n")
+
+# Count the number of survivors by Pclass
+pclass_survival_counts = train_data.groupby('Pclass')['Survived'].value_counts()
+print(f"Survival Counts by Pclass:\n{pclass_survival_counts}\n")
+
+# Average age of survivors and non-survivors
+average_age_survived = train_data[train_data['Survived'] == 1]['Age'].mean()
+average_age_not_survived = train_data[train_data['Survived'] == 0]['Age'].mean()
+print(f"Average Age of Survivors: {average_age_survived}")
+print(f"Average Age of Non-Survivors: {average_age_not_survived}"
